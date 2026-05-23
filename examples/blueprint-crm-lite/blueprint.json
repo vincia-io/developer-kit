@@ -1,0 +1,33 @@
+{
+  "id": "vincia/crm-lite",
+  "name": "CRM lite",
+  "description": "Lightweight CRM starter — contacts, deal kanban pipeline, follow-up calendar, staff dashboard.",
+  "category": "app",
+  "archetype": "portal",
+  "iconHint": "Users",
+  "tags": ["crm", "sales", "starter"],
+  "inputs": [
+    {
+      "name": "default_pipeline_stages",
+      "label": "Pipeline stages (comma-separated)",
+      "type": "string",
+      "required": true,
+      "default": "Lead, Qualified, Proposal, Won, Lost"
+    }
+  ],
+  "steps": [],
+  "flow": {
+    "startRoute": "/login",
+    "publicRoutes": ["/login", "/signup"],
+    "authenticatedRoutes": ["/", "/contacts", "/deals", "/activities"],
+    "afterLogin": "/",
+    "afterSignup": "/",
+    "afterLogout": "/login",
+    "roles": ["staff", "manager"]
+  },
+  "scaffold": {
+    "authStarter": "install",
+    "controlPanel": "install",
+    "dataHub": "install"
+  }
+}

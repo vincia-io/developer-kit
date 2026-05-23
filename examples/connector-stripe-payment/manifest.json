@@ -1,0 +1,20 @@
+{
+  "id": "vincia/connector-stripe-payment",
+  "version": "0.1.0",
+  "tier": "T1",
+  "capability": "payment",
+  "name": "Stripe Payment Connector",
+  "description": "T1 payment connector implementing PaymentProvider against Stripe's checkout-sessions + payment-intents API. Supports one-time payments + subscription intents + webhook signature verification.",
+  "platform_contract_version": "^1.0",
+  "iconHint": "CreditCard",
+  "tags": ["payment", "stripe", "checkout", "subscriptions"],
+  "scopes_required": [
+    "outbound:api.stripe.com",
+    "secret:stripe_secret_key",
+    "secret:stripe_webhook_secret"
+  ],
+  "outbound_hosts": ["api.stripe.com"],
+  "resource_budget": { "cpu_ms": 200, "memory_mb": 64, "outbound_calls": 4 },
+  "monetization": "free",
+  "license": "MIT"
+}

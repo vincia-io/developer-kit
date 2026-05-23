@@ -1,0 +1,21 @@
+{
+  "id": "vincia/connector-sendgrid-mailbox",
+  "version": "0.1.0",
+  "tier": "T1",
+  "capability": "mailbox",
+  "name": "SendGrid Transactional Mail Connector",
+  "description": "T1 mailbox connector implementing MailboxProvider via SendGrid's v3 API. Outbound-only — this is a transactional sender, not an IMAP-style inbox; the `sync` method is a no-op since there's no inbox to read.",
+  "platform_contract_version": "^1.0",
+  "iconHint": "Mail",
+  "tags": ["mailbox", "email", "sendgrid", "transactional"],
+  "scopes_required": [
+    "outbound:api.sendgrid.com",
+    "secret:sendgrid_api_key",
+    "secret:sendgrid_from_address",
+    "secret:sendgrid_from_name"
+  ],
+  "outbound_hosts": ["api.sendgrid.com"],
+  "resource_budget": { "cpu_ms": 200, "memory_mb": 64, "outbound_calls": 1 },
+  "monetization": "free",
+  "license": "MIT"
+}

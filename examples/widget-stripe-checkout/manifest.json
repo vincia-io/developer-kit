@@ -1,0 +1,33 @@
+{
+  "id": "vincia/widget-stripe-checkout",
+  "version": "0.1.0",
+  "tier": "T3",
+  "name": "Stripe Checkout Widget",
+  "description": "T3 widget that embeds a Stripe Elements payment form. Pairs with vincia/connector-stripe-payment to create the intent server-side, then mounts Stripe Elements inline so the buyer can pay without leaving the page. Participates in form-flow.",
+  "platform_contract_version": "^1.0",
+  "iconHint": "CreditCard",
+  "tags": ["payment", "stripe", "checkout", "elements", "form"],
+  "category": "form-field",
+  "auth_rule": "signed-in",
+  "slot_eligibility": ["form-field", "section-content"],
+  "scopes_required": [
+    "outbound:js.stripe.com",
+    "outbound:api.stripe.com",
+    "connector:vincia/connector-stripe-payment"
+  ],
+  "outbound_hosts": ["js.stripe.com", "api.stripe.com"],
+  "resource_budget": { "cpu_ms": 100, "memory_mb": 32, "outbound_calls": 2 },
+  "monetization": "free",
+  "license": "MIT",
+  "config_schema": {
+    "type": "object",
+    "required": ["amount", "currency"],
+    "properties": {
+      "amount": { "type": "number", "description": "Amount in minor units (cents)." },
+      "currency": { "type": "string", "description": "ISO-4217 currency code." },
+      "submit_label": { "type": "string", "default": "Pay now" }
+    }
+  },
+  "form_aware": true,
+  "ssr": false
+}

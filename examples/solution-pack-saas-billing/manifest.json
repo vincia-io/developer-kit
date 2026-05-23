@@ -1,0 +1,72 @@
+{
+  "id": "vincia/solution-pack-saas-billing",
+  "version": "0.1.0",
+  "tier": "T4",
+  "name": "SaaS Billing Solution Pack",
+  "description": "One-install bundle that wires up subscription billing: Stripe payment connector + Stripe checkout widget + invoicing blueprint. After install, a Vincia build has a working /billing route, a checkout widget for the home page, and recurring-invoice generation.",
+  "platform_contract_version": "^1.0",
+  "iconHint": "Receipt",
+  "tags": ["billing", "saas", "stripe", "subscriptions", "starter"],
+  "contains": [
+    {
+      "id": "vincia/connector-stripe-payment",
+      "version": "^0.1.0",
+      "role": "payment-processor",
+      "config_template": {
+        "stripe_secret_key": "{{secret:from-host-env-or-prompt}}",
+        "stripe_webhook_secret": "{{secret:from-stripe-dashboard}}"
+      }
+    },
+    {
+      "id": "vincia/widget-stripe-checkout",
+      "version": "^0.1.0",
+      "role": "checkout-widget",
+      "config_template": {
+        "amount": "{{form:total_minor_units}}",
+        "currency": "USD",
+        "submit_label": "Start subscription"
+      }
+    },
+    {
+      "id": "vincia/blueprint-invoicing",
+      "version": "^0.1.0",
+      "role": "billing-app"
+    }
+  ],
+  "post_install_steps": [
+    {
+      "kind": "create-collection",
+      "name": "subscriptions",
+      "fields": [
+        { "name": "customer_id", "type": "string", "required": true },
+        { "name": "plan", "type": "string", "required": true },
+        { "name": "stripe_subscription_id", "type": "string", "required": true },
+        { "name": "status", "type": "string", "required": true },
+        { "name": "current_period_end", "type": "date" }
+      ]
+    },
+    {
+      "kind": "add-route",
+      "path": "/billing",
+      "view": "billing-dashboard",
+      "auth": "signed-in"
+    },
+    {
+      "kind": "add-route",
+      "path": "/checkout/:plan",
+      "view": "checkout-form",
+      "auth": "signed-in"
+    },
+    {
+      "kind": "configure-widget",
+      "widget": "vincia/widget-stripe-checkout",
+      "slot": "/checkout/:plan#payment-section",
+      "config": {
+        "currency": "USD",
+        "submit_label": "Start subscription"
+      }
+    }
+  ],
+  "monetization": "free",
+  "license": "MIT"
+}

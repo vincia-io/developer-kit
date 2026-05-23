@@ -1,0 +1,22 @@
+{
+  "id": "vincia/connector-google-auth-provider",
+  "version": "0.1.0",
+  "tier": "T1",
+  "capability": "auth-provider",
+  "name": "Google OAuth Provider Connector",
+  "description": "T1 auth-provider connector implementing OAuthProvider for Google Sign-In. Standard OAuth 2.0 + OIDC: authorize URL, code-exchange, refresh-token, userinfo. PKCE supported.",
+  "platform_contract_version": "^1.0",
+  "iconHint": "LogIn",
+  "tags": ["auth", "oauth", "google", "sign-in", "oidc"],
+  "scopes_required": [
+    "outbound:accounts.google.com",
+    "outbound:oauth2.googleapis.com",
+    "outbound:www.googleapis.com",
+    "secret:google_oauth_client_id",
+    "secret:google_oauth_client_secret"
+  ],
+  "outbound_hosts": ["accounts.google.com", "oauth2.googleapis.com", "www.googleapis.com"],
+  "resource_budget": { "cpu_ms": 200, "memory_mb": 64, "outbound_calls": 3 },
+  "monetization": "free",
+  "license": "MIT"
+}

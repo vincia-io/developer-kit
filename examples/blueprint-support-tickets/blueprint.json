@@ -1,0 +1,28 @@
+{
+  "id": "vincia/support-tickets",
+  "name": "Support tickets module",
+  "description": "Drop-in support-ticket queue — priority + status kanban, message thread, SLA escalation.",
+  "category": "module",
+  "iconHint": "LifeBuoy",
+  "tags": ["support", "tickets", "operations"],
+  "inputs": [
+    {
+      "name": "sla_high_priority_minutes",
+      "label": "High-priority SLA (minutes)",
+      "type": "number",
+      "required": true,
+      "default": 60
+    }
+  ],
+  "steps": [],
+  "flow": {
+    "startRoute": "/support",
+    "authenticatedRoutes": ["/support", "/support/[id]"],
+    "roleGatedRoutes": {
+      "/support": ["staff", "support_agent"],
+      "/support/[id]": ["staff", "support_agent"]
+    },
+    "afterLogin": "/support",
+    "roles": ["staff", "support_agent"]
+  }
+}

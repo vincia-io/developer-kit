@@ -1,0 +1,12 @@
+{
+  "name": "solution-pack-saas-billing",
+  "version": "0.1.0",
+  "description": "T4 solution-pack example: one-install SaaS billing — Stripe connector + checkout widget + invoicing blueprint.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "vinciaPack": "solution-pack",
+  "scripts": {
+    "publish:dry-run": "vincia publish --dry-run"
+  }
+}

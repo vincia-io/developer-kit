@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "vincia": {
+      "command": "vincia",
+      "args": ["mcp", "serve"],
+      "env": {}
+    }
+  }
+}

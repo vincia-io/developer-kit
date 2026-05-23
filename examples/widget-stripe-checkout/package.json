@@ -1,0 +1,20 @@
+{
+  "name": "widget-stripe-checkout",
+  "version": "0.1.0",
+  "description": "T3 widget example: inline Stripe Elements checkout. Pairs with vincia/connector-stripe-payment.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@vincia/sdk": "https://get.vincia.io/cli/0.3.0/vincia-sdk-0.3.0.tgz"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vitest": "^2.0.0"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "id": "vincia/workflow-node-pdf-export",
+  "version": "0.1.0",
+  "tier": "T2",
+  "name": "PDF Export Workflow Node",
+  "description": "T2 workflow step that renders a record (invoice, order receipt, etc) into a PDF via the platform's PDF service. Outputs the resulting blob URL to `ctx.storage` for downstream steps.",
+  "platform_contract_version": "^1.0",
+  "iconHint": "FileText",
+  "tags": ["pdf", "export", "render", "invoice"],
+  "inputs": {
+    "type": "object",
+    "required": ["template", "data"],
+    "properties": {
+      "template": {
+        "type": "string",
+        "description": "Inline HTML template (mustache-style {{slot}} substitution against `data`)."
+      },
+      "data": {
+        "type": "object",
+        "description": "Substitution values keyed by slot name."
+      },
+      "fileName": {
+        "type": "string",
+        "description": "Output filename (without extension). Defaults to 'export'.",
+        "default": "export"
+      },
+      "format": {
+        "type": "string",
+        "enum": ["A4", "Letter", "Legal"],
+        "default": "A4"
+      }
+    }
+  },
+  "outputs": {
+    "type": "object",
+    "required": ["pdfUrl", "byteCount"],
+    "properties": {
+      "pdfUrl": { "type": "string", "description": "URL of the rendered PDF in collection storage." },
+      "byteCount": { "type": "number", "description": "Size of the PDF in bytes." }
+    }
+  },
+  "scopes_required": [
+    "outbound:pdf.vincia.internal"
+  ],
+  "outbound_hosts": ["pdf.vincia.internal"],
+  "resource_budget": { "cpu_ms": 4000, "memory_mb": 256, "outbound_calls": 1 },
+  "monetization": "free",
+  "license": "MIT"
+}

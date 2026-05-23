@@ -1,0 +1,24 @@
+{
+  "id": "vincia/connector-s3-storage",
+  "version": "0.1.0",
+  "tier": "T1",
+  "capability": "storage",
+  "name": "S3-Compatible Storage Connector",
+  "description": "T1 storage connector implementing StorageProvider against any S3-compatible bucket (AWS S3, Cloudflare R2, Backblaze B2, MinIO, DigitalOcean Spaces). Auth via AWS SigV4.",
+  "platform_contract_version": "^1.0",
+  "iconHint": "Database",
+  "tags": ["storage", "s3", "r2", "minio", "blob"],
+  "scopes_required": [
+    "outbound:*.s3.amazonaws.com",
+    "outbound:*.r2.cloudflarestorage.com",
+    "secret:s3_access_key_id",
+    "secret:s3_secret_access_key",
+    "secret:s3_bucket",
+    "secret:s3_region",
+    "secret:s3_endpoint"
+  ],
+  "outbound_hosts": ["*.s3.amazonaws.com", "*.r2.cloudflarestorage.com", "*.backblazeb2.com"],
+  "resource_budget": { "cpu_ms": 300, "memory_mb": 128, "outbound_calls": 8 },
+  "monetization": "free",
+  "license": "MIT"
+}

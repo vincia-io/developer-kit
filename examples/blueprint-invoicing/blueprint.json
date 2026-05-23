@@ -1,0 +1,53 @@
+{
+  "id": "vincia/invoicing",
+  "name": "Invoicing module",
+  "description": "Drop-in invoicing flow — clients, invoices, line items, PDF export, overdue reminders.",
+  "category": "module",
+  "version": "0.1.0",
+  "iconHint": "Receipt",
+  "tags": ["invoicing", "finance"],
+  "inputs": [
+    {
+      "name": "currency",
+      "label": "Currency code",
+      "type": "select",
+      "required": true,
+      "default": "USD",
+      "options": [
+        { "value": "USD", "label": "US Dollar" },
+        { "value": "EUR", "label": "Euro" },
+        { "value": "INR", "label": "Indian Rupee" }
+      ]
+    }
+  ],
+  "steps": [],
+  "flow": {
+    "startRoute": "/invoices",
+    "authenticatedRoutes": ["/invoices", "/invoices/[id]", "/invoices/new"],
+    "roleGatedRoutes": {
+      "/invoices": ["staff"],
+      "/invoices/[id]": ["staff"],
+      "/invoices/new": ["staff"]
+    },
+    "afterLogin": "/invoices",
+    "roles": ["staff"]
+  },
+  "fixtures": {
+    "collections": {
+      "clients": [
+        { "name": "Acme Co", "email": "billing@acme.test", "phone": "+1-555-0100" },
+        { "name": "Globex Corp", "email": "ar@globex.test", "phone": "+1-555-0101" },
+        { "name": "Initech LLC", "email": "finance@initech.test", "phone": "+1-555-0102" }
+      ],
+      "invoices": [
+        { "client": "Acme Co", "issued_at": "2026-04-01", "due_at": "2026-05-01", "total": 1200, "currency": "USD", "status": "sent" },
+        { "client": "Globex Corp", "issued_at": "2026-04-15", "due_at": "2026-05-15", "total": 850, "currency": "USD", "status": "paid" },
+        { "client": "Initech LLC", "issued_at": "2026-03-20", "due_at": "2026-04-20", "total": 2400, "currency": "USD", "status": "overdue" }
+      ]
+    },
+    "users": [
+      { "email": "alex@invoicing.test", "password": "demo1234", "role": "staff", "displayName": "Alex Staff" }
+    ],
+    "defaultLoggedInAs": "alex@invoicing.test"
+  }
+}

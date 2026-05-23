@@ -1,0 +1,19 @@
+{
+  "id": "vincia/connector-slack-notification",
+  "version": "0.1.0",
+  "tier": "T1",
+  "capability": "notification",
+  "name": "Slack Notification Connector",
+  "description": "T1 notification connector implementing NotificationChannel via Slack incoming webhooks. The `to` field is a channel name (e.g. `#alerts`); the webhook URL itself lives in ctx.secrets as `slack_webhook_url`.",
+  "platform_contract_version": "^1.0",
+  "iconHint": "MessageSquare",
+  "tags": ["notification", "slack", "webhook", "alerts"],
+  "scopes_required": [
+    "outbound:hooks.slack.com",
+    "secret:slack_webhook_url"
+  ],
+  "outbound_hosts": ["hooks.slack.com"],
+  "resource_budget": { "cpu_ms": 100, "memory_mb": 32, "outbound_calls": 1 },
+  "monetization": "free",
+  "license": "MIT"
+}

@@ -1,0 +1,16 @@
+# Force LF line endings in the repo so Windows clones don't pollute diffs with CRLF
+* text=auto eol=lf
+
+# Keep binary assets exactly as-is
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
+*.zip binary
