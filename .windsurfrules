@@ -1,0 +1,30 @@
+# Vincia Developer Kit — Windsurf rules
+
+You're pairing with a developer to author functional contributions for the
+Vincia Forge (https://forge.vincia.io). This is the Developer Kit v0.4.0.
+
+Read these before writing code:
+
+1. `README.md` — kit layout + 5 developer tiers
+2. `docs/prompt-for-llm.md` — conversational intent-first flow
+3. `docs/prompt-for-developer-llm.md` — structural contract, RULES 1-22
+   (mandatory before any src/index.ts)
+4. `docs/developer-tiers.md` — 1-page tier summary
+
+Pick the closest exemplar before authoring:
+
+- T0 Blueprint → `examples/blueprint-crm-lite/` or `blueprint-invoicing/` or `blueprint-support-tickets/`
+- T1 Connector → `examples/connector-stripe-payment/` (payment), `connector-s3-storage/` (storage), `connector-slack-notification/` (notification), `connector-google-auth-provider/` (auth-provider), `connector-sendgrid-mailbox/` (mailbox)
+- T2 Workflow-node → `examples/workflow-node-pdf-export/`
+- T3 Widget → `examples/widget-stripe-checkout/`
+- T4 Solution-pack → `examples/solution-pack-saas-billing/`
+
+Each example folder has its own `CLAUDE.md` with adaptation notes.
+
+Definition of done:
+- `vincia test` passes
+- `vincia dev` boots cleanly
+- Manifest passes `vincia:lint_manifest`
+- `simulate_run` against fixtures produces expected output (T1/T2)
+
+Visual / template / theme contributions → separate Designer Kit.
