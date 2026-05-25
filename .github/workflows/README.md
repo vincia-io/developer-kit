@@ -7,8 +7,9 @@ Workflow files designed to be dropped into `vincia-io/designer-kit` and
 
 Mirrors a release's source archives from GitHub to `get.vincia.io/kits/` so
 the public bootstrap one-liner (`curl -fsSL https://get.vincia.io/kit | bash -s
-<kind> <dir>`) always pulls the latest tag. Also updates the `-latest` aliases
-and purges Cloudflare's edge cache.
+<kind> <dir>`) always pulls the latest tag. Cache invalidation is handled at the
+edge via `Cache-Control` headers on the rolling `-latest.{zip,tar.gz}` URLs —
+no Cloudflare API token, no purge step, no operator-dependent secret setup.
 
 ### Install
 
@@ -32,8 +33,6 @@ Set these in **each** kit repo at `Settings → Secrets and variables → Action
 | `GET_VINCIA_USER` | `vincia` | non-root user with write to `/opt/vincia/get-vincia-io/kits/` |
 | `GET_VINCIA_SSH_KEY` | private key PEM | generate a dedicated deploy keypair (don't reuse `.claude/keys/vincia_ed25519`); add the **public** key to `~vincia/.ssh/authorized_keys` on the VM |
 | `GET_VINCIA_KNOWN_HOSTS` | `ssh-keyscan -H 139.84.222.189` output | run `ssh-keyscan -H 139.84.222.189` and paste the full line(s) |
-| `CF_API_TOKEN` | Cloudflare API token | create at https://dash.cloudflare.com/profile/api-tokens — **only** `Zone → Cache Purge → Purge` on the `vincia.io` zone |
-| `CF_ZONE_ID` | Cloudflare zone id for `vincia.io` | shown in the Cloudflare dashboard sidebar of the `vincia.io` zone |
 
 ### Why a dedicated deploy keypair
 
@@ -52,13 +51,20 @@ rm /tmp/get_vincia_ci_key /tmp/get_vincia_ci_key.pub
 
 The same keypair can be reused across both kit repos.
 
-### Why minimum-scope Cloudflare token
+### Why no Cloudflare cache purge
 
-`CF_API_TOKEN` with only **Zone → Cache Purge** scoped to the `vincia.io` zone
-can't modify DNS, edit Pages, or read account secrets — if the GitHub Actions
-context is ever compromised, the worst it can do is purge cache. Do **not**
-reuse the existing `CF_API_TOKEN` from the Caddy container (which has
-DNS-edit permissions for the Let's Encrypt DNS-01 challenge).
+The Caddy site block for `get.vincia.io` ships these headers (canonical:
+`vincia-platform/launch-distribution/caddyfile-snippet.md`):
+
+- `Cache-Control: public, max-age=0, must-revalidate` on `*-latest.{zip,tar.gz}`
+  — Cloudflare edge revalidates against origin on every request, so a new
+  release is visible immediately worldwide.
+- `Cache-Control: public, max-age=31536000, immutable` on
+  `*-<MAJ>.<MIN>.<PATCH>.{zip,tar.gz}` — pinned versions stay long-cached at edge
+  + browser (safe because semver-versioned files never change content).
+
+This eliminates the CF cache-purge API call that an earlier draft of this
+workflow included. No `CF_API_TOKEN` / `CF_ZONE_ID` secrets needed.
 
 ### First run (manual seed)
 
