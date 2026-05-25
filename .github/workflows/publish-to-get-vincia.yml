@@ -102,50 +102,22 @@ jobs:
           ls -la
           EOF
 
-      - name: Purge Cloudflare edge cache
-        env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
-          KIT_NAME: ${{ steps.meta.outputs.kit_name }}
-          VERSION: ${{ steps.meta.outputs.version }}
-        run: |
-          set -euo pipefail
-          # CF purge is optional — workflow still succeeds when token+zone
-          # aren't configured (mirror is already live; only edge cache may
-          # serve stale 404s for ~5 min until s-maxage rolls).
-          if [ -z "$CF_API_TOKEN" ] || [ -z "$CF_ZONE_ID" ]; then
-            echo "::notice::CF_API_TOKEN and/or CF_ZONE_ID not set as repo secrets — skipping edge-cache purge."
-            echo "Add them later (see launch-distribution/github-actions/README.md) for instant cache invalidation."
-            exit 0
-          fi
-          curl -fsS --retry 3 -X POST \
-            "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/purge_cache" \
-            -H "Authorization: Bearer ${CF_API_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d "{\"files\":[
-              \"https://get.vincia.io/kits/${KIT_NAME}-${VERSION}.zip\",
-              \"https://get.vincia.io/kits/${KIT_NAME}-${VERSION}.tar.gz\",
-              \"https://get.vincia.io/kits/${KIT_NAME}-latest.zip\",
-              \"https://get.vincia.io/kits/${KIT_NAME}-latest.tar.gz\",
-              \"https://get.vincia.io/kits/\"
-            ]}"
-          echo "Cloudflare cache purged for ${KIT_NAME}@${VERSION}"
-
       - name: Smoke test the public URLs
         env:
           KIT_NAME: ${{ steps.meta.outputs.kit_name }}
           VERSION: ${{ steps.meta.outputs.version }}
         run: |
           set -euo pipefail
-          # Give Cloudflare a beat to propagate the purge.
-          sleep 5
+          # `-latest` URLs serve Cache-Control: max-age=0, must-revalidate via
+          # Caddy, so CF edge revalidates against origin on every request —
+          # no purge needed, no cache stale window after upload.
           for URL in \
             "https://get.vincia.io/kits/${KIT_NAME}-${VERSION}.zip" \
             "https://get.vincia.io/kits/${KIT_NAME}-${VERSION}.tar.gz" \
             "https://get.vincia.io/kits/${KIT_NAME}-latest.zip" \
             "https://get.vincia.io/kits/${KIT_NAME}-latest.tar.gz" ; do
             echo "--- HEAD $URL"
-            curl -fsSI "$URL?cb=$(date +%s)" | head -5
+            curl -fsSI "$URL?cb=$(date +%s)" | head -6
           done
 
       - name: Clean up SSH key
