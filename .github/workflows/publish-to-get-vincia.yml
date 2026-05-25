@@ -1,0 +1,153 @@
+name: Publish to get.vincia.io
+
+# Mirrors a new release to get.vincia.io/kits/ so the public bootstrap one-liner
+# (`curl -fsSL https://get.vincia.io/kit | bash -s <kind> <dir>`) always pulls
+# the latest tag without needing version bumps in the script.
+#
+# Source: vincia-platform/launch-distribution/github-actions/publish-to-get-vincia.yml
+# Drop a copy into both `vincia-io/designer-kit` and `vincia-io/developer-kit`
+# at `.github/workflows/publish-to-get-vincia.yml`. See the sibling README.md
+# for the secrets you must set in each repo before the workflow can run.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to (re-)publish (e.g. v0.3.0). Required when run manually."
+        required: true
+        type: string
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Resolve release metadata
+        id: meta
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAG="${{ github.event.release.tag_name }}"
+          else
+            TAG="${{ inputs.tag }}"
+          fi
+          # Strip leading `v` so VERSION is bare semver (matches install.sh format).
+          VERSION="${TAG#v}"
+          KIT_NAME="${{ github.event.repository.name }}"   # designer-kit / developer-kit
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "kit_name=$KIT_NAME" >> "$GITHUB_OUTPUT"
+          echo "Will mirror: $KIT_NAME@$TAG (VERSION=$VERSION)"
+
+      - name: Download release archives from GitHub
+        env:
+          TAG: ${{ steps.meta.outputs.tag }}
+          KIT_NAME: ${{ steps.meta.outputs.kit_name }}
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/mirror
+          # GitHub auto-generates source archives under /archive/refs/tags/<tag>.{zip,tar.gz}.
+          # They nest under `<repo>-<version>/` — the bootstrap scripts flatten that on extract.
+          curl -fsSL --retry 3 -o "/tmp/mirror/${KIT_NAME}-${VERSION}.zip" \
+            "https://github.com/${{ github.repository }}/archive/refs/tags/${TAG}.zip"
+          curl -fsSL --retry 3 -o "/tmp/mirror/${KIT_NAME}-${VERSION}.tar.gz" \
+            "https://github.com/${{ github.repository }}/archive/refs/tags/${TAG}.tar.gz"
+          ls -la /tmp/mirror/
+          # Sanity: archives must be non-empty + valid.
+          [ -s "/tmp/mirror/${KIT_NAME}-${VERSION}.zip" ] || { echo "zip is empty"; exit 1; }
+          [ -s "/tmp/mirror/${KIT_NAME}-${VERSION}.tar.gz" ] || { echo "tar.gz is empty"; exit 1; }
+          gzip -t "/tmp/mirror/${KIT_NAME}-${VERSION}.tar.gz"
+          unzip -t "/tmp/mirror/${KIT_NAME}-${VERSION}.zip" >/dev/null
+
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.GET_VINCIA_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.GET_VINCIA_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_get_vincia
+          chmod 600 ~/.ssh/id_get_vincia
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Upload archives + update -latest aliases
+        env:
+          HOST: ${{ secrets.GET_VINCIA_HOST }}
+          USER: ${{ secrets.GET_VINCIA_USER }}
+          KIT_NAME: ${{ steps.meta.outputs.kit_name }}
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          set -euo pipefail
+          REMOTE_DIR="/opt/vincia/get-vincia-io/kits"
+          ssh -i ~/.ssh/id_get_vincia -o UserKnownHostsFile=~/.ssh/known_hosts \
+            "${USER}@${HOST}" "mkdir -p ${REMOTE_DIR}"
+          scp -i ~/.ssh/id_get_vincia -o UserKnownHostsFile=~/.ssh/known_hosts \
+            "/tmp/mirror/${KIT_NAME}-${VERSION}.zip" \
+            "/tmp/mirror/${KIT_NAME}-${VERSION}.tar.gz" \
+            "${USER}@${HOST}:${REMOTE_DIR}/"
+          # Update -latest aliases (symlinks, atomic via mv -T on Linux).
+          ssh -i ~/.ssh/id_get_vincia -o UserKnownHostsFile=~/.ssh/known_hosts \
+            "${USER}@${HOST}" bash -s <<EOF
+          set -euo pipefail
+          cd ${REMOTE_DIR}
+          chmod 644 ${KIT_NAME}-${VERSION}.zip ${KIT_NAME}-${VERSION}.tar.gz
+          ln -sfn ${KIT_NAME}-${VERSION}.zip    ${KIT_NAME}-latest.zip
+          ln -sfn ${KIT_NAME}-${VERSION}.tar.gz ${KIT_NAME}-latest.tar.gz
+          echo '--- ls -la after upload ---'
+          ls -la
+          EOF
+
+      - name: Purge Cloudflare edge cache
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+          KIT_NAME: ${{ steps.meta.outputs.kit_name }}
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          set -euo pipefail
+          # CF purge is optional — workflow still succeeds when token+zone
+          # aren't configured (mirror is already live; only edge cache may
+          # serve stale 404s for ~5 min until s-maxage rolls).
+          if [ -z "$CF_API_TOKEN" ] || [ -z "$CF_ZONE_ID" ]; then
+            echo "::notice::CF_API_TOKEN and/or CF_ZONE_ID not set as repo secrets — skipping edge-cache purge."
+            echo "Add them later (see launch-distribution/github-actions/README.md) for instant cache invalidation."
+            exit 0
+          fi
+          curl -fsS --retry 3 -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CF_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "{\"files\":[
+              \"https://get.vincia.io/kits/${KIT_NAME}-${VERSION}.zip\",
+              \"https://get.vincia.io/kits/${KIT_NAME}-${VERSION}.tar.gz\",
+              \"https://get.vincia.io/kits/${KIT_NAME}-latest.zip\",
+              \"https://get.vincia.io/kits/${KIT_NAME}-latest.tar.gz\",
+              \"https://get.vincia.io/kits/\"
+            ]}"
+          echo "Cloudflare cache purged for ${KIT_NAME}@${VERSION}"
+
+      - name: Smoke test the public URLs
+        env:
+          KIT_NAME: ${{ steps.meta.outputs.kit_name }}
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          set -euo pipefail
+          # Give Cloudflare a beat to propagate the purge.
+          sleep 5
+          for URL in \
+            "https://get.vincia.io/kits/${KIT_NAME}-${VERSION}.zip" \
+            "https://get.vincia.io/kits/${KIT_NAME}-${VERSION}.tar.gz" \
+            "https://get.vincia.io/kits/${KIT_NAME}-latest.zip" \
+            "https://get.vincia.io/kits/${KIT_NAME}-latest.tar.gz" ; do
+            echo "--- HEAD $URL"
+            curl -fsSI "$URL?cb=$(date +%s)" | head -5
+          done
+
+      - name: Clean up SSH key
+        if: always()
+        run: rm -f ~/.ssh/id_get_vincia
