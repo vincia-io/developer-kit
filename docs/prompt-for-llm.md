@@ -1,5 +1,19 @@
 # Developer-LLM prompt — Vincia Forge contribution
 
+> **v0.5.0 update (2026-05-28) — read first:** post-G-S96/97/98/99, the
+> G-S96 tool-name rename (colon-form → underscore-form, e.g.
+> `vincia_lint_manifest`) is universal; the kit's LLM aids now teach the
+> underscore form across all 5 MCP-client adapter files. The
+> chat-first sandbox loop (`vincia_sandbox_open_draft / write_file /
+> run / publish` on `mcp.vincia.io/`) is documented as the equal-second
+> contributor loop alongside the local `vincia create / dev / test /
+> publish` loop — see the new "Two equally-valid loops" section below.
+> `prompt-for-developer-llm.md` RULES 13 and 14 now flag the
+> sandbox-loop equivalents of `vincia test` and `vincia publish` (no new
+> rules; same 22, two clarifying callouts). T3 widget contributors get a
+> visual-debug callout (`vincia_studio_screenshot`) in
+> `examples/widget-stripe-checkout/CLAUDE.md` — G-S100.
+
 > **v0.4.0 update (2026-05-23) — read first:** when the developer picks any
 > tier (T0 blueprint / T1 connector / T2 workflow-node / T3 widget /
 > T4 solution-pack), you MUST also load
@@ -53,6 +67,50 @@ The platform has **two** archetypes. There is no third option.
 If you previously saw a third value called `website_as_portal`, ignore it —
 it's been retired. The new `website` archetype subsumes the auth + customer
 dashboard surfaces that used to require it.
+
+---
+
+## Two equally-valid loops
+
+A contributor can author through EITHER of two end-to-end loops. Pick the
+one that matches where the developer already is — don't push them out of
+their editor of choice.
+
+- **Local-first** (the original): `vincia create <type> <name>` clones a
+  starter to disk. The developer edits in their IDE. `vincia dev` boots
+  the local devcontainer for T1/T2 or the widget-dev-server for T3.
+  `vincia test` runs vitest + manifest lint. `vincia publish` ships.
+  Best when the developer already has their editor open and wants to
+  iterate against local file watching.
+
+- **Chat-first** (post-G-S97, added 2026-05-28): `vincia_sandbox_open_draft(kind:'plugin')`
+  opens a cloud workspace. The LLM writes files into the sandbox via
+  `vincia_sandbox_write_file` and reads them back via
+  `vincia_sandbox_read_file` / `vincia_sandbox_list_files`.
+  `vincia_sandbox_run` exercises the plugin against fixtures inside the
+  sandbox's anyapp sidecar — same workerd binary that runs in prod.
+  `vincia_sandbox_publish` ships. Best when the developer is in
+  Claude.ai / ChatGPT / Cursor agent mode and doesn't want to switch
+  out to a terminal.
+
+Both loops talk to the SAME draft row + the SAME `submitVersion`
+endpoint — once a draft is opened you can sync it between local disk
+and the cloud sandbox with `vincia drafts sync` (push local → cloud)
+and `vincia drafts pull` (cloud → local), held by a per-user advisory
+lock with a 30 min sliding TTL so the two paths never trample each
+other. The marketplace listing produced by either loop is identical.
+
+### How to start, by where the developer is
+
+| The developer is in… | Start with… |
+| --- | --- |
+| their IDE, already cd'd into a folder | `vincia create <type> <name>` (local-first) |
+| Claude.ai / ChatGPT / Cursor agent, no terminal handy | `vincia_sandbox_open_draft(kind:'<type>')` (chat-first) |
+| an LLM client AND wants to keep editing locally too | open the draft chat-first, then `vincia drafts pull <id>` to bring it down to disk |
+| a stuck local draft they want a second LLM's eyes on | `vincia drafts sync <id>` to push, then open the same draft id from any LLM client |
+
+The `<type>` values are the same in both loops:
+`blueprint | connector | workflow-node | widget | solution-pack`.
 
 ---
 

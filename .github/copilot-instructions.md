@@ -2,7 +2,7 @@
 
 You're pairing with a developer to author functional contributions for the
 [Vincia Forge](https://forge.vincia.io). This folder is the **Developer Kit
-v0.4.0**.
+v0.5.0**.
 
 ## Required reading before writing code
 
@@ -33,7 +33,7 @@ Each example folder has its own `CLAUDE.md` with adaptation notes.
 
 - `vincia test` passes (vitest)
 - `vincia dev` boots cleanly
-- Manifest passes `vincia:lint_manifest`
+- Manifest passes `vincia_lint_manifest`
 - `simulate_run` against fixtures produces expected output (T1/T2)
 
 Visual / template / theme contributions → separate

@@ -1,4 +1,4 @@
-# Vincia Developer Kit — v0.4.0
+# Vincia Developer Kit — v0.5.0
 
 You've extracted the Developer Kit — the curated starter pack for developers
 authoring **functional contributions** that ship to the **Vincia Forge**.
@@ -130,10 +130,41 @@ vincia login --api-host https://<their-vincia-host>
 Then load `docs/prompt-for-llm.md` and walk the conversational flow from its
 top.
 
-## Status — v0.4.0 (May 2026)
+## What's new in v0.5.0 (May 2026)
+
+- **Tool-name rename caught up**: 5 LLM-aid files (`CLAUDE.md`, `AGENTS.md`,
+  `.cursor/rules/vincia.mdc`, `.windsurfrules`,
+  `.github/copilot-instructions.md`) now reference `vincia_lint_manifest`
+  (underscore) — the colon-form was renamed platform-wide in G-S96 and
+  the kit was the last surface still teaching the old name.
+- **Chat-first sandbox loop documented** in `docs/prompt-for-llm.md`. The
+  local `vincia create/dev/test/publish` loop is still here; alongside it
+  is the post-G-S97 `vincia_sandbox_open_draft / write_file / run /
+  publish` cloud-sandbox loop that an LLM client can drive without the
+  developer ever opening a terminal. Both loops hit the same draft row
+  and the same `submitVersion` endpoint, so the marketplace listing is
+  identical either way.
+- **Two new clarifying notes in `docs/prompt-for-developer-llm.md`** (RULES
+  1-22 unchanged): RULE 13 now flags `vincia_sandbox_run` as the
+  chat-first equivalent of `vincia test`, and RULE 14 calls out that
+  `vincia_sandbox_publish ≡ vincia publish` so the LLM doesn't pick
+  between them as if they were different shipping paths.
+- **Visual debug callout** in `examples/widget-stripe-checkout/CLAUDE.md`
+  — call `vincia_studio_screenshot(slug, page)` after each widget edit
+  to see the rendered after-state inline in your LLM client (G-S100).
+- **Built-in widget catalog snapshot**: every kit zip bakes in
+  `docs/widget-catalog.{html,json}` + `docs/widget-catalog-for-llm.md`
+  generated from the live platform manifest at build time. If the
+  catalog gains a widget after you extracted the kit, run
+  `vincia widgets sync --out docs` to refresh the snapshot.
+
+## Status — v0.5.0 (May 2026)
 
 The CLI's `widgets *` + `create *` commands are live for all 5 developer
 tiers. `test`, `preview`, `dev`, and `publish` are under active development.
+The chat-first `vincia_sandbox_*` MCP tools are live on `mcp.vincia.io/`
+(40 public tools) — attach the vct_* contributor token to your LLM client
+to use them.
 
 ## Earn
 

@@ -5,7 +5,7 @@ convention (Aider, Continue, and any AGENTS-compatible client).
 
 You're pairing with a human developer to author functional contributions for
 the [Vincia Forge](https://forge.vincia.io). This folder is the **Developer
-Kit v0.4.0**.
+Kit v0.5.0**.
 
 ## Read these in order before writing code
 
@@ -34,7 +34,7 @@ Each example folder has its own `CLAUDE.md` with adaptation notes.
 
 - `vincia test` passes (vitest)
 - `vincia dev` boots cleanly
-- Manifest passes `vincia:lint_manifest`
+- Manifest passes `vincia_lint_manifest`
 - `simulate_run` against fixtures produces expected output (T1/T2)
 
 Visual / template / theme contributions → separate

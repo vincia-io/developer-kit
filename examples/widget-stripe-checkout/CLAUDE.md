@@ -31,6 +31,19 @@ T3 widget vs T2 workflow step decision: T3 ships a UI surface mounted in the
 host page. T2 ships a pure transform with no UI. If your code needs to
 render anything to the user, it's T3.
 
+## Visual debug (post-G-S100)
+
+Widgets are the most visual tier. After each edit to `src/widget.tsx` (or
+its CSS surface), call `vincia_studio_screenshot(slug: <test-app-slug>,
+page: '/checkout')` against the test app you mounted this widget into —
+the tool returns an MCP image content block that Claude.ai / ChatGPT
+renders inline, so you see the actual rendered widget without switching
+to a browser. Pass `viewport: 'mobile' | 'tablet' | 'desktop'` to check
+responsive states. Iterate visually: tweak → screenshot → tweak →
+screenshot. The 7 mutating studio tools (`add_widget`, `edit_widget`,
+`apply_theme`, etc.) ALSO accept `include_screenshot: true` so the
+return value of the mutation already contains the rendered after-state.
+
 Out of scope here: subscription billing UI (separate widget),
 refunds/reversals (handled out-of-band via the connector), PCI surface
 (Stripe Elements isolates card data from us). See README.

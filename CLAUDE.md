@@ -2,7 +2,7 @@
 
 You're pairing with a human developer to author functional contributions for
 the [Vincia Forge](https://forge.vincia.io). This folder is the **Developer
-Kit v0.4.0** — blueprints (T0), connectors (T1), workflow-nodes (T2), widgets
+Kit v0.5.0** — blueprints (T0), connectors (T1), workflow-nodes (T2), widgets
 (T3), and solution packs (T4) that other Vincia builders install onto their
 builds.
 
@@ -48,7 +48,7 @@ and what to swap when adapting.
 - `vincia test` passes (unit tests via vitest)
 - `vincia dev` boots cleanly for T1/T2/T3 (devcontainer for T1/T2, in-process
   widget-dev-server for T3)
-- Manifest passes `vincia:lint_manifest` MCP tool / `vincia test --remote`
+- Manifest passes `vincia_lint_manifest` MCP tool / `vincia test --remote`
 - `simulate_run` against the example's fixtures produces expected output (T1/T2)
 
 ## Out of scope here

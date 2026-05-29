@@ -350,6 +350,15 @@ declaring means kills under load. Measure during dev with `vincia test
 - Cover at least: defineConnector/defineStep/defineWidget metadata + method
   signatures present + happy-path return shape.
 
+> **Sandbox-loop equivalent (post-G-S97).** If the developer is in chat-first
+> mode, `vincia_sandbox_run(draft_id, fixture)` replaces `vincia test` as the
+> exercise step: it boots a sandbox-anyapp tenant, drives the plugin against
+> the named fixture, and returns a `tool_result.trace_calls[]` array the LLM
+> can assert on. The vitest assertions you'd write locally become
+> `trace_calls` assertions on outbound URLs, secret reads, and storage
+> writes. Same fixtures, same SDK, same workerd binary as prod — the only
+> difference is who's holding the keyboard.
+
 Use `@vincia/sdk/testing` fixtures to stub `ctx`:
 
 ```ts
@@ -382,12 +391,22 @@ For most plugins, the only dep you need is `@vincia/sdk`:
 
 ```json
 "dependencies": {
-  "@vincia/sdk": "https://get.vincia.io/cli/0.3.0/vincia-sdk-0.3.0.tgz"
+  "@vincia/sdk": "https://get.vincia.io/cli/0.1.0/vincia-sdk-0.1.0.tgz"
 }
 ```
 
 If you need additional npm deps, declare them in `dependencies` AND list them
 in a `bundleDependencies` array. Native modules are rejected at publish time.
+
+> **`vincia_sandbox_publish` ≡ `vincia publish` (post-G-S97).** The chat-first
+> loop's `vincia_sandbox_publish(draft_id)` and the local-first
+> `vincia publish` both call the SAME `submitVersion` endpoint hardened in
+> G-S91 + reused in G-S97 Pin 1. Identical PG row shape, identical MinIO
+> bundle path, identical review-queue entry. The marketplace listing,
+> revenue-share math, and review SLA are the same whichever loop you
+> shipped from. So pick the loop that fits the surface you're already in;
+> don't switch loops "to be safe" — there's no behavioral difference at
+> publish time.
 
 ## RULE 15 — T1 connectors implement EXACTLY ONE capability
 
