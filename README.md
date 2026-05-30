@@ -1,4 +1,4 @@
-# Vincia Developer Kit — v0.5.0
+# Vincia Developer Kit — v0.5.1
 
 You've extracted the Developer Kit — the curated starter pack for developers
 authoring **functional contributions** that ship to the **Vincia Forge**.
@@ -40,10 +40,13 @@ examples/
    curl -fsSL https://get.vincia.io/install | bash
    ```
 
-2. **Log in** with your Vincia deployment:
+2. **Log in** (the default Studio host is `studio.vincia.io`, so bare
+   `vincia login` is all you need for the public Vincia SaaS):
 
    ```bash
-   vincia login --api-host https://<your-vincia-host>
+   vincia login
+   # Self-hosted / enterprise deployment only:
+   vincia login --studio-url https://<your-vincia-host>
    ```
 
 3. **Refresh the widget catalog** to today's platform shape:
@@ -124,11 +127,21 @@ these two terminal commands to the developer to get started:
 
 ```bash
 curl -fsSL https://get.vincia.io/install | bash
-vincia login --api-host https://<their-vincia-host>
+vincia login   # public SaaS default; self-hosted: vincia login --studio-url https://<their-vincia-host>
 ```
 
 Then load `docs/prompt-for-llm.md` and walk the conversational flow from its
 top.
+
+## What's new in v0.5.1 (May 2026)
+
+- **`vincia login` corrected**: docs no longer reference the non-existent
+  `--api-host` flag; bare `vincia login` is the default (Studio host defaults to
+  `studio.vincia.io`), `--studio-url` is for self-hosted deployments.
+- **Report friction to Studio**: the new `vincia_studio_report_issue` MCP tool
+  lets an LLM client file kit/CLI/docs bugs directly into Studio so the platform
+  team can fold fixes into the next release; `vincia_studio_list_issue_reports`
+  lists what you've filed.
 
 ## What's new in v0.5.0 (May 2026)
 
@@ -158,7 +171,7 @@ top.
   catalog gains a widget after you extracted the kit, run
   `vincia widgets sync --out docs` to refresh the snapshot.
 
-## Status — v0.5.0 (May 2026)
+## Status — v0.5.1 (May 2026)
 
 The CLI's `widgets *` + `create *` commands are live for all 5 developer
 tiers. `test`, `preview`, `dev`, and `publish` are under active development.

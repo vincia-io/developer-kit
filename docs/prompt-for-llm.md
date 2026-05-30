@@ -411,7 +411,7 @@ CLI, instruct them to run these two commands in their terminal:
 
 ```bash
 curl -fsSL https://get.vincia.io/install | bash
-vincia login --api-host https://<their-vincia-host>
+vincia login   # public SaaS default; self-hosted: vincia login --studio-url https://<their-vincia-host>
 ```
 
 Then come back to this conversation and continue from the opening intent

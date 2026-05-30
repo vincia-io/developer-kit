@@ -2,7 +2,7 @@
 
 You're pairing with a human developer to author functional contributions for
 the [Vincia Forge](https://forge.vincia.io). This folder is the **Developer
-Kit v0.5.0** — blueprints (T0), connectors (T1), workflow-nodes (T2), widgets
+Kit v0.5.1** — blueprints (T0), connectors (T1), workflow-nodes (T2), widgets
 (T3), and solution packs (T4) that other Vincia builders install onto their
 builds.
 
@@ -50,6 +50,17 @@ and what to swap when adapting.
   widget-dev-server for T3)
 - Manifest passes `vincia_lint_manifest` MCP tool / `vincia test --remote`
 - `simulate_run` against the example's fixtures produces expected output (T1/T2)
+
+## Hit a tooling bug? File it to Studio
+
+If you or the developer hit friction with the CLI, the docs, the install flow,
+`vincia dev`/`test`, or Studio itself, call the `vincia_studio_report_issue`
+MCP tool (studio MCP surface, `vst_*` token) to file it directly into Studio —
+don't just narrate it in chat. Pass `title`, `detail`, and ideally `surface`
+(`developer-kit` / `cli` / `studio` / `docs`), `severity`, `category`, `kit`
+(`developer-kit@0.5.1`), and a `context` object (secrets are auto-redacted).
+The platform team triages these and folds fixes into the next kit/CLI version.
+`vincia_studio_list_issue_reports` lists what you've filed.
 
 ## Out of scope here
 
