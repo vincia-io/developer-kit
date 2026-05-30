@@ -1,4 +1,4 @@
-# Vincia Developer Kit — v0.5.1
+# Vincia Developer Kit — v0.5.2
 
 You've extracted the Developer Kit — the curated starter pack for developers
 authoring **functional contributions** that ship to the **Vincia Forge**.
@@ -37,8 +37,19 @@ examples/
 1. **Install the CLI** (one-time):
 
    ```bash
+   # macOS / Linux:
    curl -fsSL https://get.vincia.io/install | bash
    ```
+   ```powershell
+   # Windows (PowerShell):
+   iwr -useb https://get.vincia.io/install.ps1 | iex
+   ```
+   > **Windows note:** open a **fresh** PowerShell after install (the npm
+   > global bin dir is only on PATH in new terminals). If a default
+   > `Restricted` execution policy blocks `npm`/`vincia` (`.ps1` shims), run
+   > once (no admin needed):
+   > `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
+   > — or call the `.cmd` shims (`npm.cmd`, `vincia.cmd`). Requires Node 18+.
 
 2. **Log in** (the default Studio host is `studio.vincia.io`, so bare
    `vincia login` is all you need for the public Vincia SaaS):
@@ -133,6 +144,12 @@ vincia login   # public SaaS default; self-hosted: vincia login --studio-url htt
 Then load `docs/prompt-for-llm.md` and walk the conversational flow from its
 top.
 
+## What's new in v0.5.2 (May 2026)
+
+- **Windows install docs** — the PowerShell installer one-liner, an
+  execution-policy note (`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`),
+  and an "open a fresh terminal" PATH reminder.
+
 ## What's new in v0.5.1 (May 2026)
 
 - **`vincia login` corrected**: docs no longer reference the non-existent
@@ -171,7 +188,7 @@ top.
   catalog gains a widget after you extracted the kit, run
   `vincia widgets sync --out docs` to refresh the snapshot.
 
-## Status — v0.5.1 (May 2026)
+## Status — v0.5.2 (May 2026)
 
 The CLI's `widgets *` + `create *` commands are live for all 5 developer
 tiers. `test`, `preview`, `dev`, and `publish` are under active development.

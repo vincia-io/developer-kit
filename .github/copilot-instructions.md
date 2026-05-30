@@ -2,7 +2,7 @@
 
 You're pairing with a developer to author functional contributions for the
 [Vincia Forge](https://forge.vincia.io). This folder is the **Developer Kit
-v0.5.1**.
+v0.5.2**.
 
 ## Required reading before writing code
 
