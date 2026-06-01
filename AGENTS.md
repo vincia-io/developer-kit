@@ -5,7 +5,7 @@ convention (Aider, Continue, and any AGENTS-compatible client).
 
 You're pairing with a human developer to author functional contributions for
 the [Vincia Forge](https://forge.vincia.io). This folder is the **Developer
-Kit v0.5.2**.
+Kit v0.5.3**.
 
 ## Read these in order before writing code
 

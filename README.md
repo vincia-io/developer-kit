@@ -1,4 +1,4 @@
-# Vincia Developer Kit — v0.5.2
+# Vincia Developer Kit — v0.5.3
 
 You've extracted the Developer Kit — the curated starter pack for developers
 authoring **functional contributions** that ship to the **Vincia Forge**.
@@ -109,6 +109,24 @@ examples/
    vincia publish
    ```
 
+## Keeping the kit up to date
+
+New kit versions ship regularly (bug fixes, new rules, new examples). This kit is a folder you downloaded — it doesn't auto-update.
+
+- **Check your version vs latest:** the title line above (`# Vincia Developer Kit — vX.Y.Z`) and the `## Status` line show what you have; the latest is at `https://get.vincia.io/kits/` and in the `## What's new` changelog below.
+- **Cloned with git (recommended for staying current):** `git pull` updates the rulebook, examples, and editor configs in place, and shows you exactly what changed.
+  ```bash
+  git clone https://github.com/vincia-io/developer-kit.git    # first time
+  cd developer-kit && git pull                                # to update
+  ```
+- **Downloaded the zip:** re-download the latest and unzip it over the folder (back up local edits first).
+  ```bash
+  curl -fsSL https://get.vincia.io/kits/developer-kit-latest.zip -o developer-kit.zip && unzip -o developer-kit.zip
+  ```
+- **Keep the CLI current too** (separate from the kit): `vincia upgrade`, or re-run `curl -fsSL https://get.vincia.io/install | bash`. After upgrading the CLI **or** the kit, **restart your LLM client / MCP server** so it relaunches `vincia mcp serve` and surfaces new tools.
+
+> Using a web client over the remote MCP surface (`https://mcp.vincia.io/contributor`) instead of a local kit? That surface is always current — nothing to upgrade.
+
 ## How to author with an LLM
 
 Open `docs/prompt-for-llm.md` in your LLM (Claude / ChatGPT / Cursor / any).
@@ -143,6 +161,14 @@ vincia login   # public SaaS default; self-hosted: vincia login --studio-url htt
 
 Then load `docs/prompt-for-llm.md` and walk the conversational flow from its
 top.
+
+## What's new in v0.5.3 (May 2026)
+
+- **New "Keeping the kit up to date" section** (above) — how to refresh an existing
+  kit to a newer version: `git pull` if you cloned (recommended), or re-download the
+  `-latest` zip; how to check your version vs latest; and a reminder to keep the CLI
+  current + restart your MCP client after an upgrade. Mirrors the hosted
+  https://forge.vincia.io/docs/getting-started "Keeping your kit up to date" section.
 
 ## What's new in v0.5.2 (May 2026)
 
@@ -188,7 +214,7 @@ top.
   catalog gains a widget after you extracted the kit, run
   `vincia widgets sync --out docs` to refresh the snapshot.
 
-## Status — v0.5.2 (May 2026)
+## Status — v0.5.3 (May 2026)
 
 The CLI's `widgets *` + `create *` commands are live for all 5 developer
 tiers. `test`, `preview`, `dev`, and `publish` are under active development.
